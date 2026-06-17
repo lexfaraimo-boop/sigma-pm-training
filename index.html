@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sigma: Table Groupings &amp; Functions | Zinc Work</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal:#00FFCE;
+  --dark:#000000;
+  --gray:#6C6C6C;
+  --peach:#F7E2DA;
+  --white:#ffffff;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--peach);color:var(--dark);overflow:hidden;height:100vh;}
+.presentation{width:100vw;height:100vh;position:relative;}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;padding:72px 72px 60px;display:none;flex-direction:column;background:var(--peach);}
+.slide.active{display:flex;}
+.slide.center{justify-content:center;align-items:center;text-align:center;}
+.logo{position:absolute;top:20px;left:32px;}
+.slide-num{position:absolute;bottom:26px;right:40px;font-size:13px;color:var(--gray);}
+h1{font-size:52px;font-weight:800;line-height:1.1;margin-bottom:16px;}
+h1 span{color:var(--teal);}
+h2{font-size:36px;font-weight:700;margin-bottom:28px;margin-top:44px;}
+h2 span{color:var(--teal);}
+.subtitle{font-size:24px;color:var(--gray);margin-top:12px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;flex:1;}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px;flex:1;}
+.grid25{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;flex:1;}
+.card{background:var(--white);border-radius:12px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.card h4{font-size:15px;font-weight:700;color:var(--teal);margin-bottom:12px;text-transform:uppercase;letter-spacing:.03em;}
+.card p,.card li{font-size:14px;color:var(--gray);line-height:1.6;}
+.card ul{list-style:none;padding:0;}
+.card li{padding:5px 0;border-bottom:1px solid #f0f0f0;}
+.card li:last-child{border-bottom:none;}
+.card .desc{font-size:14px;color:var(--gray);line-height:1.5;margin-top:4px;}
+.card .title{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+code,pre{font-family:'SF Mono',Monaco,'Courier New',monospace;}
+.code-block{background:#1a1a1a;color:#00FFCE;padding:14px 18px;border-radius:8px;font-size:13px;line-height:1.7;margin:8px 0;}
+.code-block .comment{color:#666;}
+.code-inline{background:#1a1a1a;color:#00FFCE;padding:2px 8px;border-radius:4px;font-size:13px;font-family:'SF Mono',Monaco,'Courier New',monospace;}
+.steps{display:flex;flex-direction:column;gap:10px;flex:1;}
+.step{display:flex;align-items:flex-start;gap:16px;background:var(--white);border-radius:10px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.step-num{min-width:32px;height:32px;background:var(--dark);color:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin-top:1px;}
+.step-text{font-size:15px;color:var(--dark);line-height:1.5;}
+.step-text .code-inline{font-size:12px;}
+.flow{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.flow-box{background:var(--white);border-radius:8px;padding:14px 22px;font-weight:600;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+.flow-arrow{color:var(--teal);font-size:22px;font-weight:700;}
+.hbox{background:var(--white);border-left:4px solid var(--teal);border-radius:0 10px 10px 0;padding:18px 22px;margin:10px 0;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+.hbox strong{display:block;font-size:15px;font-weight:700;margin-bottom:4px;}
+.hbox p{font-size:14px;color:var(--gray);line-height:1.5;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;flex:1;}
+.pill{display:inline-block;background:var(--dark);color:var(--teal);padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin:4px;}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}
+table{width:100%;border-collapse:collapse;background:var(--white);border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);font-size:14px;}
+th{background:var(--dark);color:var(--white);padding:13px 18px;text-align:left;font-weight:600;}
+td{padding:12px 18px;border-bottom:1px solid #f0f0f0;color:var(--gray);}
+tr:last-child td{border-bottom:none;}
+.nav-dots{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;gap:8px;}
+.dot{width:9px;height:9px;border-radius:50%;background:#ccc;cursor:pointer;transition:background .2s;}
+.dot.active{background:var(--teal);}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.ba-box{background:var(--white);border-radius:10px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+.ba-box h5{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;color:var(--gray);}
+.ba-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:13px;color:var(--dark);}
+.ba-row:last-child{border-bottom:none;}
+.ba-row.total{font-weight:700;color:var(--teal);}
+.formula-item{background:var(--white);border-radius:10px;padding:16px 20px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.formula-label{font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+.steps-two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;}
+.scenario{background:var(--white);border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:14px;color:var(--gray);line-height:1.5;border-left:4px solid var(--teal);}
+</style>
+</head>
+<body>
+<div class="presentation">
+
+<!-- LOGO TEMPLATE (repeated on each slide) -->
+<!-- SVG ref defined once for reuse -->
+<svg style="display:none"><defs>
+<linearGradient id="zg" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/>
+</linearGradient>
+</defs></svg>
+
+<!-- ============================================================
+     SLIDE 1 — Title
+     ============================================================ -->
+<div class="slide active center" id="s1">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg1" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg1)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h1>Sigma: Table Groupings<br>&amp; <span>Functions</span></h1>
+  <p class="subtitle">PM Training — June 2026</p>
+  <div class="slide-num">1 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 2 — What is Sigma?
+     ============================================================ -->
+<div class="slide" id="s2">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg2" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg2)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>What is <span>Sigma?</span></h2>
+  <div class="grid2" style="grid-template-columns:1fr 1fr;gap:20px;">
+    <div class="card"><div class="title">Zinc's BI Tool</div><div class="desc">Connects directly to the data warehouse — explore live data without writing SQL.</div></div>
+    <div class="card"><div class="title">Explore Mode</div><div class="desc">Your changes are personal — you cannot break anything for others.</div></div>
+    <div class="card"><div class="title">Live Data</div><div class="desc">Always up to date — no exports, no stale spreadsheets.</div></div>
+    <div class="card"><div class="title">Key Concepts</div><div class="desc">Workbook &nbsp;·&nbsp; Page &nbsp;·&nbsp; Element &nbsp;·&nbsp; Formula Bar</div></div>
+  </div>
+  <div class="slide-num">2 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 3 — How Sigma Works
+     ============================================================ -->
+<div class="slide" id="s3">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg3" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg3)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>How <span>Sigma Works</span></h2>
+  <div class="flow">
+    <div class="flow-box">Workbook</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Page</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Element</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Formula Bar</div>
+  </div>
+  <div class="hbox"><strong>Explore Mode (default)</strong><p>Changes are personal, not saved for others. Explore freely — you cannot break anything.</p></div>
+  <div class="hbox"><strong>Edit Mode</strong><p>Changes are saved for everyone. Use carefully — only switch to Edit Mode when you intend to publish changes.</p></div>
+  <div class="slide-num">3 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 4 — What Are Groupings?
+     ============================================================ -->
+<div class="slide" id="s4">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg4" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg4)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>What Are <span>Groupings?</span></h2>
+  <div class="two-col">
+    <div>
+      <p style="font-size:15px;color:var(--gray);line-height:1.7;margin-bottom:16px;">A grouping collapses a table so there is <strong>one row per unique value</strong> in a column. Instead of seeing every individual request, you see a summary — one row per company, per month, per employee.</p>
+      <div class="card" style="margin-top:8px;">
+        <h4>Common Use Cases</h4>
+        <ul>
+          <li>Revenue per quarter</li>
+          <li>Requests by company</li>
+          <li>Tasks by employee</li>
+          <li>Sales by region</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="before-after">
+        <div class="ba-box">
+          <h5>Before (ungrouped)</h5>
+          <div class="ba-row"><span>Request 1</span><span>Acme Ltd</span></div>
+          <div class="ba-row"><span>Request 2</span><span>Acme Ltd</span></div>
+          <div class="ba-row"><span>Request 3</span><span>Acme Ltd</span></div>
+          <div class="ba-row"><span>Request 4</span><span>Beta Co</span></div>
+          <div class="ba-row"><span>Request 5</span><span>Beta Co</span></div>
+        </div>
+        <div class="ba-box">
+          <h5>After (grouped by company)</h5>
+          <div class="ba-row"><span>Acme Ltd</span><span style="color:var(--teal);font-weight:700;">3 requests</span></div>
+          <div class="ba-row total"><span>Beta Co</span><span style="color:var(--teal);font-weight:700;">2 requests</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">4 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 5 — Tutorial 1: Group a Table
+     ============================================================ -->
+<div class="slide" id="s5">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg5" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg5)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2><span>Tutorial 1:</span> How to Group a Table</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text">Click on the column you want to group by (e.g. <span class="code-inline">Company Name</span>)</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Select <strong>Group Column</strong> from the dropdown menu</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">The table collapses to one row per unique value</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Click <span class="code-inline">+</span> &gt; <strong>Add Column</strong> to add a calculation</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text">Type <span class="code-inline">Sum([Revenue])</span> and press Enter</div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-text">Rename the column <strong>"Total Revenue"</strong> by double-clicking the header</div></div>
+  </div>
+  <div class="slide-num">5 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 6 — Key Function: Contains
+     ============================================================ -->
+<div class="slide" id="s6">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg6" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg6)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>Key Function: <span>Contains</span></h2>
+  <div class="two-col">
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <h4>Syntax</h4>
+        <div class="code-block">Contains(string, substring)</div>
+        <ul>
+          <li>Returns <strong>True</strong> or <strong>False</strong></li>
+          <li>Case-sensitive — wrap in <span class="code-inline">Lower()</span> to ignore case</li>
+          <li>Multiple substrings: returns True if <em>any</em> match</li>
+        </ul>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card"><div class="formula-label">Flag Ltd companies</div><div class="code-block">Contains([Company Name], "Ltd")</div></div>
+      <div class="card"><div class="formula-label">Case-insensitive match</div><div class="code-block">Contains(Lower([Product]), "camera")</div></div>
+      <div class="card"><div class="formula-label">Multiple terms</div><div class="code-block">Contains([Description], "urgent", "ASAP")</div></div>
+    </div>
+  </div>
+  <div class="slide-num">6 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 7 — Text & Type Functions
+     ============================================================ -->
+<div class="slide" id="s7">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg7" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg7)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>Text &amp; <span>Type Functions</span></h2>
+  <div class="two-col">
+    <div class="card">
+      <h4>Text Functions</h4>
+      <ul>
+        <li><span class="code-inline">Concat([A], " ", [B])</span> — join strings</li>
+        <li><span class="code-inline">Lower()</span> / <span class="code-inline">Upper()</span> — change case</li>
+        <li><span class="code-inline">Trim()</span> — remove leading/trailing spaces</li>
+        <li><span class="code-inline">Left([Col], 3)</span> / <span class="code-inline">Right([Col], 3)</span> — extract chars</li>
+        <li><span class="code-inline">Len([Col])</span> — character count</li>
+        <li><span class="code-inline">Replace([Col], "old", "new")</span> — substitute</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Type Functions</h4>
+      <ul>
+        <li><span class="code-inline">Text([Col])</span> — convert to text</li>
+        <li><span class="code-inline">Number([Col])</span> — convert to number</li>
+        <li><span class="code-inline">Date([Col])</span> — convert to date</li>
+        <li><span class="code-inline">Logical([Col])</span> — convert to True / False</li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-num">7 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 8 — Aggregate Functions
+     ============================================================ -->
+<div class="slide" id="s8">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg8" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg8)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2><span>Aggregate</span> Functions</h2>
+  <p style="font-size:14px;color:var(--gray);margin-bottom:16px;margin-top:-16px;">Functions that summarise multiple rows into a single value — always used inside a grouped table.</p>
+  <div class="grid3">
+    <div class="card">
+      <h4>Calculation</h4>
+      <ul>
+        <li><span class="code-inline">Sum([Col])</span></li>
+        <li><span class="code-inline">Avg([Col])</span></li>
+        <li><span class="code-inline">Count([Col])</span></li>
+        <li><span class="code-inline">CountDistinct([Col])</span></li>
+        <li><span class="code-inline">Min([Col])</span></li>
+        <li><span class="code-inline">Max([Col])</span></li>
+        <li><span class="code-inline">Median([Col])</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Conditional</h4>
+      <ul>
+        <li><span class="code-inline">SumIf([Amount], [Status]="Paid")</span></li>
+        <li><span class="code-inline">CountIf([Col], condition)</span></li>
+        <li><span class="code-inline">AvgIf([Col], condition)</span></li>
+        <li><span class="code-inline">MaxIf([Col], condition)</span></li>
+        <li><span class="code-inline">MinIf([Col], condition)</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Totals</h4>
+      <ul>
+        <li><span class="code-inline">PercentOfTotal(Sum([Revenue]))</span></li>
+        <li><span class="code-inline">GrandTotal(Sum([Revenue]))</span></li>
+        <li><span class="code-inline">Subtotal([Revenue])</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="slide-num">8 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 9 — Tutorial 2
+     ============================================================ -->
+<div class="slide" id="s9">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg9" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg9)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2><span>Tutorial 2:</span> Revenue Summary by Company</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text">Group table by <span class="code-inline">Company Name</span></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Add <span class="code-inline">Sum([Revenue])</span> → rename <strong>"Total Revenue"</strong></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Add <span class="code-inline">CountDistinct([Request ID])</span> → rename <strong>"Total Requests"</strong></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Add <span class="code-inline">Avg([Revenue])</span> → rename <strong>"Avg per Request"</strong></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text">Add <span class="code-inline">SumIf([Revenue], [Status] = "Paid")</span> → rename <strong>"Paid Revenue"</strong></div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-text">Add <span class="code-inline">PercentOfTotal(Sum([Revenue]))</span> → rename <strong>"% of Total"</strong></div></div>
+    <div class="step"><div class="step-num">7</div><div class="step-text">Sort by <strong>Total Revenue</strong> descending</div></div>
+  </div>
+  <div class="slide-num">9 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 10 — Window Functions: The Concept
+     ============================================================ -->
+<div class="slide" id="s10">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg10" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg10)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>Window Functions: <span>The Concept</span></h2>
+  <table style="margin-bottom:20px;">
+    <thead><tr><th></th><th>Aggregate</th><th>Window</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Rows returned</strong></td><td>One per group</td><td>All rows kept</td></tr>
+      <tr><td><strong>Collapses data</strong></td><td>Yes</td><td>No</td></tr>
+      <tr><td><strong>Use for</strong></td><td>Totals, counts</td><td>Running totals, ranks, trends</td></tr>
+    </tbody>
+  </table>
+  <div class="pills">
+    <span class="pill">Cumulative</span>
+    <span class="pill">Ranking</span>
+    <span class="pill">Moving</span>
+    <span class="pill">Shifting</span>
+  </div>
+  <div class="slide-num">10 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 11 — Window Functions Reference
+     ============================================================ -->
+<div class="slide" id="s11">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg11" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg11)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>Window Functions: <span>Reference</span></h2>
+  <div class="grid4">
+    <div class="card"><h4>Cumulative</h4><ul><li><span class="code-inline">CumulativeSum</span></li><li><span class="code-inline">CumulativeAvg</span></li><li><span class="code-inline">CumulativeMax</span></li><li><span class="code-inline">CumulativeMin</span></li></ul></div>
+    <div class="card"><h4>Ranking</h4><ul><li><span class="code-inline">Rank</span></li><li><span class="code-inline">RankDense</span></li><li><span class="code-inline">RowNumber</span></li><li><span class="code-inline">Ntile([Col], 4)</span></li></ul></div>
+    <div class="card"><h4>Moving</h4><ul><li><span class="code-inline">MovingAvg([Sales], 3)</span></li><li><span class="code-inline">MovingSum([Col], 7)</span></li><li><span class="code-inline">MovingMax</span></li><li><span class="code-inline">MovingMin</span></li></ul></div>
+    <div class="card"><h4>Shifting</h4><ul><li><span class="code-inline">Lag([Col], 1)</span></li><li><span class="code-inline">Lead([Col], 1)</span></li><li><span class="code-inline">First</span></li><li><span class="code-inline">Last</span></li><li><span class="code-inline">FillDown</span></li></ul></div>
+  </div>
+  <div class="slide-num">11 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 12 — Tutorial 3
+     ============================================================ -->
+<div class="slide" id="s12">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg12" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg12)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2><span>Tutorial 3:</span> Running Totals &amp; Rankings</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text">Group table by <span class="code-inline">Month</span>, sorted oldest to newest</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Add <span class="code-inline">Sum([Revenue])</span> → rename <strong>"Monthly Revenue"</strong></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Add <span class="code-inline">CumulativeSum(Sum([Revenue]))</span> → rename <strong>"Running Total"</strong></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Add <span class="code-inline">Rank(Sum([Revenue]))</span> → rename <strong>"Revenue Rank"</strong></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text">Add <span class="code-inline">Lag(Sum([Revenue]), 1)</span> → rename <strong>"Prior Month"</strong></div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-text">Add <span class="code-inline">Sum([Revenue]) - Lag(Sum([Revenue]), 1)</span> → rename <strong>"MoM Change"</strong></div></div>
+  </div>
+  <div class="slide-num">12 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 13 — More PM Features
+     ============================================================ -->
+<div class="slide" id="s13">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg13" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg13)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>More <span>PM Features</span></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;flex:1;">
+    <div class="card"><div class="title">Pivot Tables</div><div class="desc">Compare across two dimensions at once — revenue by company AND month.</div></div>
+    <div class="card"><div class="title">Lookups / Joins</div><div class="desc">Add data from another table using a shared ID — like VLOOKUP, but live.</div></div>
+    <div class="card"><div class="title">Conditional Formatting</div><div class="desc">Colour cells red / amber / green by value thresholds.</div></div>
+    <div class="card"><div class="title">Charts</div><div class="desc">Any grouped table becomes a bar, line, or scatter chart instantly.</div></div>
+    <div class="card"><div class="title">Export</div><div class="desc">Three-dot menu → Export → CSV. Your active filters apply automatically.</div></div>
+  </div>
+  <div class="slide-num">13 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 14 — Building Complex Formulas
+     ============================================================ -->
+<div class="slide" id="s14">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg14" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg14)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>Building <span>Complex Formulas</span></h2>
+  <div style="flex:1;display:flex;flex-direction:column;gap:8px;overflow:hidden;">
+    <div class="formula-item"><div class="formula-label">1. Case-insensitive text check</div><div class="code-block">Contains(Lower([Company Name]), "ltd")</div></div>
+    <div class="formula-item"><div class="formula-label">2. Conditional sum on text</div><div class="code-block">SumIf([Revenue], Contains(Lower([Category]), "software"))</div></div>
+    <div class="formula-item"><div class="formula-label">3. % of total</div><div class="code-block">Sum([Revenue]) / GrandTotal(Sum([Revenue]))</div></div>
+    <div class="formula-item"><div class="formula-label">4. Period-over-period</div><div class="code-block">Sum([Revenue]) - Lag(Sum([Revenue]), 1)</div></div>
+    <div class="formula-item"><div class="formula-label">5. Tier label</div><div class="code-block">If(Sum([Revenue]) > 10000, "High", If(Sum([Revenue]) > 5000, "Mid", "Low"))</div></div>
+  </div>
+  <div class="slide-num">14 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 15 — Tutorial 4
+     ============================================================ -->
+<div class="slide" id="s15">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg15" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg15)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2><span>Tutorial 4:</span> Full Account Health View</h2>
+  <div class="scenario">Build a complete account health dashboard showing revenue tier, ranking, and period-over-period change for every company.</div>
+  <div class="steps-two-col">
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">1</div><div class="step-text" style="font-size:13px;">Group by <span class="code-inline">Company Name</span></div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">2</div><div class="step-text" style="font-size:13px;"><span class="code-inline">Sum([Revenue])</span> → "Total Revenue"</div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">3</div><div class="step-text" style="font-size:13px;"><span class="code-inline">CountDistinct([Request ID])</span> → "Total Requests"</div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">4</div><div class="step-text" style="font-size:13px;"><span class="code-inline">PercentOfTotal(Sum([Revenue]))</span> → "% of Total"</div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">5</div><div class="step-text" style="font-size:13px;"><span class="code-inline">Rank(Sum([Revenue]))</span> → "Revenue Rank"</div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">6</div><div class="step-text" style="font-size:13px;"><span class="code-inline">Lag(Sum([Revenue]), 1)</span> → "Prior Period"</div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">7</div><div class="step-text" style="font-size:13px;"><span class="code-inline">Sum([Revenue]) - Lag(Sum([Revenue]), 1)</span> → "Change vs Prior"</div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">8</div><div class="step-text" style="font-size:13px;"><span class="code-inline">If(Sum([Revenue]) > 10000, "High", If(...))</span> → "Tier"</div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">9</div><div class="step-text" style="font-size:13px;">Apply conditional formatting: green if Change &gt; 0, red if &lt; 0</div></div>
+    <div class="step" style="background:white;border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);"><div class="step-num" style="min-width:26px;height:26px;font-size:12px;">10</div><div class="step-text" style="font-size:13px;">Sort by Revenue Rank ascending</div></div>
+  </div>
+  <div class="slide-num">15 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 16 — Cheat Sheet
+     ============================================================ -->
+<div class="slide" id="s16">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg16" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg16)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h2>Quick Reference <span>Cheat Sheet</span></h2>
+  <div class="grid4">
+    <div class="card"><h4>Text &amp; Type</h4><p style="font-size:13px;line-height:1.9;">Contains · Lower · Concat · Trim · Len · Left · Right · Replace · Text() · Number() · Date()</p></div>
+    <div class="card"><h4>Aggregate</h4><p style="font-size:13px;line-height:1.9;">Sum · Count · CountDistinct · Avg · Min · Max · SumIf · CountIf · PercentOfTotal · GrandTotal</p></div>
+    <div class="card"><h4>Window</h4><p style="font-size:13px;line-height:1.9;">CumulativeSum · Rank · RankDense · RowNumber · Lag · Lead · MovingAvg · FillDown</p></div>
+    <div class="card"><h4>Key Rules</h4><ul style="font-size:13px;"><li>Case-sensitive → use Lower()</li><li>Aggregates need a grouped table</li><li>Window keeps all rows</li><li>Explore mode = safe to try anything</li></ul></div>
+  </div>
+  <div class="slide-num">16 / 17</div>
+</div>
+
+<!-- ============================================================
+     SLIDE 17 — Thank You
+     ============================================================ -->
+<div class="slide center" id="s17">
+  <div class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 330" width="110" height="37"><defs><linearGradient id="zg17" x1="2448.23" y1="-1225.9" x2="2688.74" y2="-1225.9" gradientTransform="translate(-1061.69 -2405.72) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00ffce"/><stop offset="1" stop-color="#0ee6bd"/></linearGradient></defs><rect width="975" height="330" rx="39.97" ry="39.97" fill="#000"/><path fill="#fff" d="M867.21,177.56h51.57c-8.24-28.23-39.82-45.02-85.02-45.02-23.25,0-44.66,4.96-60.3,13.95-18.2,10.47-27.82,26.14-27.82,45.29s8.7,34.38,25.87,44.54c15.29,9.05,36.81,13.83,62.25,13.83,57.75,0,77.55-24,84.31-39.77h-52.1c-7,8.13-18.27,12.25-33.52,12.25-22.81,0-36.97-11.82-36.97-30.85,0-9.9,3.97-18.15,11.49-23.86,6.67-5.07,15.87-7.86,25.92-7.86,16.51,0,30.11,6.98,34.32,17.49Z"/><polygon fill="#fff" points="318.42 201.75 318.42 245.79 490.72 245.79 490.72 214.33 373.26 214.33 490.72 127.16 490.72 83.12 321.45 83.12 320.65 114.58 435.52 114.58 318.42 201.75"/><path fill="#fff" d="M656.02,159.63c19.32,0,30.85,11.04,30.85,29.54v56.62h48.53l.43-61.88c.1-13.86-4.17-25.24-12.69-33.83-10.38-10.46-26.92-16.22-46.56-16.22-24.81,0-45,8.76-56.85,24.66l-1.96,2.63-5.83-23.79h-40.54v108.44h48.52v-50.5c0-22,13.83-35.66,36.1-35.66Z"/><rect fill="#fff" x="506.15" y="137.36" width="48.95" height="108.44"/><path fill="url(#zg17)" d="M269.42,217.91V107.63c0-3.57-1.9-6.87-4.99-8.65l-95.21-55.12c-3.1-1.79-6.92-1.79-10.02,0L63.98,98.97c-3.09,1.79-4.99,5.09-4.99,8.65v110.28c0,3.57,1.9,6.87,4.99,8.65l95.21,55.12c3.1,1.79,6.92,1.79,10.02,0l95.21-55.12c3.09-1.79,4.99-5.09,4.99-8.65Z"/><polygon points="148.75 91.91 107 116.24 107 133.18 140.53 113.61 140.7 113.78 114.89 161.12 114.89 179.04 172.1 145.83 172.26 146 127.38 209.78 127.38 230 245.75 161.29 227.83 150.93 161.41 189.89 161.25 189.73 203.33 127.42 188.21 118.54 136.59 148.63 136.42 148.46 163.39 100.46 148.75 91.91"/></svg></div>
+  <h1><span>Questions?</span></h1>
+  <p class="subtitle">Full documentation in Google Docs · Post in <strong>#data-requests</strong> for help</p>
+  <p style="margin-top:16px;font-size:18px;color:var(--gray);">lex.faraimo@zincwork.com</p>
+  <div class="slide-num">17 / 17</div>
+</div>
+
+<!-- Navigation dots -->
+<div class="nav-dots" id="navDots"></div>
+
+</div><!-- /presentation -->
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dotsContainer = document.getElementById('navDots');
+let current = 0;
+
+// Build dots
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => goTo(i));
+  dotsContainer.appendChild(d);
+});
+
+function goTo(n) {
+  slides[current].classList.remove('active');
+  dotsContainer.children[current].classList.remove('active');
+  current = (n + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  dotsContainer.children[current].classList.add('active');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+});
+</script>
+</body>
+</html>
